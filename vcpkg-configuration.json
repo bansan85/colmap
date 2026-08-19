@@ -2,7 +2,7 @@
   "default-registry": {
     "kind": "git",
     "repository": "https://github.com/bansan85/vcpkg",
-    "baseline": "ee16b51fcb1fa132f1068753b8fcc3e2fd27a621",
-    "reference": "cuda-native"
+    "baseline": "d7ecffe84dc941976fd511c3fef40e4bad86aa7c",
+    "reference": "cuda-native_tmp"
   }
 }
