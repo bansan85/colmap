@@ -1,0 +1,14 @@
+{
+  "pid": 3724,
+  "sessionId": "db2ecca2-a79b-48e2-a2d0-9da2d6f11ad6",
+  "cwd": "<workspace>",
+  "startedAt": 1787087491445,
+  "procStart": "134315610898712393",
+  "version": "2.1.233",
+  "peerProtocol": 1,
+  "kind": "interactive",
+  "entrypoint": "claude-vscode",
+  "name": "colmap-40",
+  "nameSource": "derived",
+  "nameSince": 1787087491447
+}
