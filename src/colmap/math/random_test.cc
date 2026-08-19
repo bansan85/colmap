@@ -40,19 +40,19 @@ namespace colmap {
 namespace {
 
 TEST(PRNGSeed, Nominal) {
-  PRNG.reset();
-  EXPECT_TRUE(PRNG == nullptr);
+  PRNG().reset();
+  EXPECT_TRUE(PRNG() == nullptr);
   SetPRNGSeed();
-  EXPECT_TRUE(PRNG != nullptr);
+  EXPECT_TRUE(PRNG() != nullptr);
   SetPRNGSeed(0);
-  EXPECT_TRUE(PRNG != nullptr);
+  EXPECT_TRUE(PRNG() != nullptr);
   std::thread thread([]() {
     // Each thread defines their own PRNG instance.
-    EXPECT_TRUE(PRNG == nullptr);
+    EXPECT_TRUE(PRNG() == nullptr);
     SetPRNGSeed();
-    EXPECT_TRUE(PRNG != nullptr);
+    EXPECT_TRUE(PRNG() != nullptr);
     SetPRNGSeed(0);
-    EXPECT_TRUE(PRNG != nullptr);
+    EXPECT_TRUE(PRNG() != nullptr);
   });
   thread.join();
 }

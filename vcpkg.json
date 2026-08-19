@@ -12,6 +12,8 @@
         "boost-property-map",
         "boost-property-tree",
         "boost-unordered",
+        "faiss",
+        "poselib",
         {
             "name": "ceres",
             "features": [
@@ -71,8 +73,11 @@
             "description": "Build with ONNX support.",
             "dependencies": [
                 {
-                    "name": "onnxruntime-gpu",
-                    "platform": "windows"
+                    "name": "onnxruntime",
+                    "platform": "windows",
+                    "features": [
+                        "cuda"
+                    ]
                 }
             ]
         },

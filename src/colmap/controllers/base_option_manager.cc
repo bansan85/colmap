@@ -63,7 +63,7 @@ void BaseOptionManager::AddRandomOptions() {
   }
   added_random_options_ = true;
 
-  AddDefaultOption("default_random_seed", &kDefaultPRNGSeed);
+  AddDefaultOption("default_random_seed", &DefaultPRNGSeed());
 }
 
 void BaseOptionManager::AddLogOptions() {

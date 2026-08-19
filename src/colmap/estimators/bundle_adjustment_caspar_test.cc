@@ -44,9 +44,9 @@ constexpr double kConstantPoseVarEps = 1e-9;
 #define CheckVariableCamera(camera, orig_camera)       \
   {                                                    \
     const size_t focal_length_idx =                    \
-        SimpleRadialCameraModel::focal_length_idxs[0]; \
+        SimpleRadialCameraModel::FocalLengthIdxs()[0]; \
     const size_t extra_param_idx =                     \
-        SimpleRadialCameraModel::extra_params_idxs[0]; \
+        SimpleRadialCameraModel::ExtraParamsIdxs()[0]; \
     EXPECT_NE((camera).params[focal_length_idx],       \
               (orig_camera).params[focal_length_idx]); \
     EXPECT_NE((camera).params[extra_param_idx],        \
@@ -56,9 +56,9 @@ constexpr double kConstantPoseVarEps = 1e-9;
 #define CheckConstantCamera(camera, orig_camera)       \
   {                                                    \
     const size_t focal_length_idx =                    \
-        SimpleRadialCameraModel::focal_length_idxs[0]; \
+        SimpleRadialCameraModel::FocalLengthIdxs()[0]; \
     const size_t extra_param_idx =                     \
-        SimpleRadialCameraModel::extra_params_idxs[0]; \
+        SimpleRadialCameraModel::ExtraParamsIdxs()[0]; \
     EXPECT_EQ((camera).params[focal_length_idx],       \
               (orig_camera).params[focal_length_idx]); \
     EXPECT_EQ((camera).params[extra_param_idx],        \
@@ -570,8 +570,8 @@ TEST(DefaultBundleAdjuster, ConstantFocalLengthAndExtraParams) {
   CheckConstantCamFromWorld(reconstruction.Image(1),
                             orig_reconstruction.Image(1));
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   const auto& camera0 = reconstruction.Camera(1);
   const auto& orig_camera0 = orig_reconstruction.Camera(1);
@@ -624,12 +624,12 @@ TEST(DefaultBundleAdjuster, VariablePrincipalPoint) {
   CheckConstantCamFromWorld(reconstruction.Image(1),
                             orig_reconstruction.Image(1));
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
   const size_t principal_point_idx_x =
-      SimpleRadialCameraModel::principal_point_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[0];
   const size_t principal_point_idx_y =
-      SimpleRadialCameraModel::principal_point_idxs[0];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[0];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   const auto& camera0 = reconstruction.Camera(1);
   const auto& orig_camera0 = orig_reconstruction.Camera(1);
@@ -724,12 +724,12 @@ TEST(DefaultBundleAdjuster, MergedCalibFixedPose) {
   ASSERT_NE(summary->termination_type,
             BundleAdjustmentTerminationType::FAILURE);
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
   const size_t principal_point_idx_x =
-      SimpleRadialCameraModel::principal_point_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[0];
   const size_t principal_point_idx_y =
-      SimpleRadialCameraModel::principal_point_idxs[1];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[1];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   for (const camera_t cam_id : {camera_t{1}, camera_t{2}}) {
     const auto& cam = reconstruction.Camera(cam_id);
@@ -1001,10 +1001,10 @@ TEST(DefaultBundleAdjuster, MergedCalibMatchesCeres) {
   constexpr double kExtraTol = 1.5e-2;
 #endif
 
-  const size_t f_idx = SimpleRadialCameraModel::focal_length_idxs[0];
-  const size_t cx_idx = SimpleRadialCameraModel::principal_point_idxs[0];
-  const size_t cy_idx = SimpleRadialCameraModel::principal_point_idxs[1];
-  const size_t k_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+  const size_t f_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
+  const size_t cx_idx = SimpleRadialCameraModel::PrincipalPointIdxs()[0];
+  const size_t cy_idx = SimpleRadialCameraModel::PrincipalPointIdxs()[1];
+  const size_t k_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   for (const auto& [cam_id, _] : reconstruction.Cameras()) {
     const auto& cam_ceres = reconstruction_ceres.Camera(cam_id);

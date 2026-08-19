@@ -4,6 +4,7 @@ endif()
 
 COLMAP_ADD_LIBRARY(
     NAME colmap_poisson_recon
+    TYPE STATIC
     SRCS
         PoissonRecon.h PoissonRecon.cpp
         SurfaceTrimmer.h SurfaceTrimmer.cpp

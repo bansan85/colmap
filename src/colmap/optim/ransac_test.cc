@@ -146,7 +146,7 @@ TEST(RANSAC, SimilarityTransform) {
 
   RANSACOptions options;
   options.max_error = 10;
-  options.random_seed = kDefaultPRNGSeed;
+  options.random_seed = DefaultPRNGSeed();
   RANSAC<SimilarityTransformEstimator<3>> ransac(options);
   const auto report = ransac.Estimate(data.src, data.tgt);
 
@@ -158,7 +158,7 @@ TEST(RANSAC, ParallelSimilarityTransform) {
 
   RANSACOptions options;
   options.max_error = 10;
-  options.random_seed = kDefaultPRNGSeed;
+  options.random_seed = DefaultPRNGSeed();
   options.num_threads = 4;
   RANSAC<SimilarityTransformEstimator<3>> ransac(options);
   const auto report = ransac.Estimate(data.src, data.tgt);

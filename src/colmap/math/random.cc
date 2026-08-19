@@ -33,12 +33,18 @@
 
 namespace colmap {
 
-thread_local std::unique_ptr<std::mt19937> PRNG;
+std::unique_ptr<std::mt19937>& PRNG() {
+  thread_local std::unique_ptr<std::mt19937> prng;
+  return prng;
+}
 
-int kDefaultPRNGSeed = 0;
+int& DefaultPRNGSeed() {
+  static int seed = 0;
+  return seed;
+}
 
 void SetPRNGSeed(unsigned seed) {
-  PRNG = std::make_unique<std::mt19937>(seed);
+  PRNG() = std::make_unique<std::mt19937>(seed);
   // srand is not thread-safe.
   static std::mutex mutex;
   std::unique_lock<std::mutex> lock(mutex);

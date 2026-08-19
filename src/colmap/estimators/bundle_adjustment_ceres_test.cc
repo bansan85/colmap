@@ -45,9 +45,9 @@ constexpr double kConstantPoseVarEps = 1e-9;
 #define CheckVariableCamera(camera, orig_camera)       \
   {                                                    \
     const size_t focal_length_idx =                    \
-        SimpleRadialCameraModel::focal_length_idxs[0]; \
+        SimpleRadialCameraModel::FocalLengthIdxs()[0]; \
     const size_t extra_param_idx =                     \
-        SimpleRadialCameraModel::extra_params_idxs[0]; \
+        SimpleRadialCameraModel::ExtraParamsIdxs()[0]; \
     EXPECT_NE((camera).params[focal_length_idx],       \
               (orig_camera).params[focal_length_idx]); \
     EXPECT_NE((camera).params[extra_param_idx],        \
@@ -57,9 +57,9 @@ constexpr double kConstantPoseVarEps = 1e-9;
 #define CheckConstantCamera(camera, orig_camera)       \
   {                                                    \
     const size_t focal_length_idx =                    \
-        SimpleRadialCameraModel::focal_length_idxs[0]; \
+        SimpleRadialCameraModel::FocalLengthIdxs()[0]; \
     const size_t extra_param_idx =                     \
-        SimpleRadialCameraModel::extra_params_idxs[0]; \
+        SimpleRadialCameraModel::ExtraParamsIdxs()[0]; \
     EXPECT_EQ((camera).params[focal_length_idx],       \
               (orig_camera).params[focal_length_idx]); \
     EXPECT_EQ((camera).params[extra_param_idx],        \
@@ -962,8 +962,8 @@ TEST(DefaultBundleAdjuster, ConstantFocalLength) {
   CheckConstantCamFromWorldTranslationCoord(reconstruction.Image(2),
                                             orig_reconstruction.Image(2));
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   const auto& camera0 = reconstruction.Camera(1);
   const auto& orig_camera0 = orig_reconstruction.Camera(1);
@@ -1026,12 +1026,12 @@ TEST(DefaultBundleAdjuster, VariablePrincipalPoint) {
   CheckConstantCamFromWorldTranslationCoord(reconstruction.Image(2),
                                             orig_reconstruction.Image(2));
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
   const size_t principal_point_idx_x =
-      SimpleRadialCameraModel::principal_point_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[0];
   const size_t principal_point_idx_y =
-      SimpleRadialCameraModel::principal_point_idxs[0];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+      SimpleRadialCameraModel::PrincipalPointIdxs()[0];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   const auto& camera0 = reconstruction.Camera(1);
   const auto& orig_camera0 = orig_reconstruction.Camera(1);
@@ -1102,8 +1102,8 @@ TEST(DefaultBundleAdjuster, ConstantExtraParam) {
   CheckConstantCamFromWorldTranslationCoord(reconstruction.Image(2),
                                             orig_reconstruction.Image(2));
 
-  const size_t focal_length_idx = SimpleRadialCameraModel::focal_length_idxs[0];
-  const size_t extra_param_idx = SimpleRadialCameraModel::extra_params_idxs[0];
+  const size_t focal_length_idx = SimpleRadialCameraModel::FocalLengthIdxs()[0];
+  const size_t extra_param_idx = SimpleRadialCameraModel::ExtraParamsIdxs()[0];
 
   const auto& camera0 = reconstruction.Camera(1);
   const auto& orig_camera0 = orig_reconstruction.Camera(1);

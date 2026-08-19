@@ -36,15 +36,20 @@
 
 namespace colmap {
 
-extern thread_local std::unique_ptr<std::mt19937> PRNG;
+// Access the thread-local PRNG instance. Returns a reference to a
+// thread-local variable, so it is safe to use across shared library
+// boundaries even though `std::mt19937` cannot be exported directly.
+std::unique_ptr<std::mt19937>& PRNG();
 
-extern int kDefaultPRNGSeed;
+// Access the default PRNG seed. Exposed as a mutable reference so that it
+// can be configured, e.g., through command-line options.
+int& DefaultPRNGSeed();
 
 // Initialize the PRNG with the given seed.
 //
 // @param seed   The seed for the PRNG. If the seed is -1, the current time
 //               is used as the seed.
-void SetPRNGSeed(unsigned seed = kDefaultPRNGSeed);
+void SetPRNGSeed(unsigned seed = DefaultPRNGSeed());
 
 // Generate uniformly distributed random integer number.
 //
@@ -82,32 +87,32 @@ void Shuffle(uint32_t num_to_shuffle, std::vector<T>* elems);
 
 template <typename T>
 T RandomUniformInteger(const T min, const T max) {
-  if (COLMAP_PREDICT_FALSE(PRNG == nullptr)) {
+  if (COLMAP_PREDICT_FALSE(PRNG() == nullptr)) {
     SetPRNGSeed();
   }
 
   std::uniform_int_distribution<T> distribution(min, max);
-  return distribution(*PRNG);
+  return distribution(*PRNG());
 }
 
 template <typename T>
 T RandomUniformReal(const T min, const T max) {
-  if (COLMAP_PREDICT_FALSE(PRNG == nullptr)) {
+  if (COLMAP_PREDICT_FALSE(PRNG() == nullptr)) {
     SetPRNGSeed();
   }
 
   std::uniform_real_distribution<T> distribution(min, max);
-  return distribution(*PRNG);
+  return distribution(*PRNG());
 }
 
 template <typename T>
 T RandomGaussian(const T mean, const T stddev) {
-  if (COLMAP_PREDICT_FALSE(PRNG == nullptr)) {
+  if (COLMAP_PREDICT_FALSE(PRNG() == nullptr)) {
     SetPRNGSeed();
   }
 
   std::normal_distribution<T> distribution(mean, stddev);
-  return distribution(*PRNG);
+  return distribution(*PRNG());
 }
 
 template <typename T>

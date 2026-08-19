@@ -54,7 +54,7 @@ void AddOutlierMatches(double inlier_ratio,
         RandomUniformInteger<point2D_t>(0, num_points2D1 - 1),
         RandomUniformInteger<point2D_t>(0, num_points2D2 - 2));
   }
-  std::shuffle(matches->begin(), matches->end(), *PRNG);
+  std::shuffle(matches->begin(), matches->end(), *PRNG());
 }
 
 std::vector<image_pair_t> ExtractExhaustiveImagePairs(
@@ -292,7 +292,7 @@ void SynthesizeSparseMatches(double inlier_match_ratio,
 
   // Try to remove edges randomly while maintaining connectivity.
   std::shuffle(
-      remaining_image_pairs.begin(), remaining_image_pairs.end(), *PRNG);
+      remaining_image_pairs.begin(), remaining_image_pairs.end(), *PRNG());
   std::set<image_pair_t> remaining_edges_set(remaining_image_pairs.begin(),
                                              remaining_image_pairs.end());
   size_t edges_removed = 0;
@@ -364,7 +364,7 @@ void SynthesizeDataset(const SyntheticDatasetOptions& options,
   THROW_CHECK(!options.image_extension.empty());
   THROW_CHECK(options.image_extension[0] == '.');
 
-  if (PRNG == nullptr) {
+  if (PRNG() == nullptr) {
     SetPRNGSeed();
   }
 
@@ -572,7 +572,7 @@ void SynthesizeDataset(const SyntheticDatasetOptions& options,
         }
 
         // Shuffle 2D points, so each image has 3D points ordered differently.
-        std::shuffle(points2D.begin(), points2D.end(), *PRNG);
+        std::shuffle(points2D.begin(), points2D.end(), *PRNG());
 
         if (database != nullptr) {
           // Create keypoints to add to database.
@@ -659,7 +659,7 @@ void SynthesizeDataset(const SyntheticDatasetOptions& options,
         continue;
       }
       auto elements = track.Elements();
-      std::shuffle(elements.begin(), elements.end(), *PRNG);
+      std::shuffle(elements.begin(), elements.end(), *PRNG());
       const int num_to_delete =
           static_cast<int>(elements.size()) - options.track_length;
       for (int i = 0; i < num_to_delete; ++i) {

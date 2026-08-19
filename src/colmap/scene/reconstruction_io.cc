@@ -66,7 +66,7 @@ bool ExportNVM(const Reconstruction& reconstruction,
         camera.model_id == PinholeCameraModel::model_id) {
       k = 0.0;
     } else if (camera.model_id == SimpleRadialCameraModel::model_id) {
-      k = -1 * camera.params[SimpleRadialCameraModel::extra_params_idxs[0]];
+      k = -1 * camera.params[SimpleRadialCameraModel::ExtraParamsIdxs()[0]];
     } else {
       LOG(WARNING) << "NVM only supports `SIMPLE_RADIAL` "
                       "and pinhole camera models.\n";
@@ -155,11 +155,11 @@ bool ExportCam(const Reconstruction& reconstruction,
       k1 = 0.0;
       k2 = 0.0;
     } else if (camera.model_id == SimpleRadialCameraModel::model_id) {
-      k1 = camera.params[SimpleRadialCameraModel::extra_params_idxs[0]];
+      k1 = camera.params[SimpleRadialCameraModel::ExtraParamsIdxs()[0]];
       k2 = 0.0;
     } else if (camera.model_id == RadialCameraModel::model_id) {
-      k1 = camera.params[RadialCameraModel::extra_params_idxs[0]];
-      k2 = camera.params[RadialCameraModel::extra_params_idxs[1]];
+      k1 = camera.params[RadialCameraModel::ExtraParamsIdxs()[0]];
+      k2 = camera.params[RadialCameraModel::ExtraParamsIdxs()[1]];
     } else {
       LOG(WARNING) << "CAM only supports `SIMPLE_RADIAL`, `RADIAL`, "
                       "and pinhole camera models.\n";
@@ -240,11 +240,11 @@ bool ExportRecon3D(const Reconstruction& reconstruction,
       k1 = 0.0;
       k2 = 0.0;
     } else if (camera.model_id == SimpleRadialCameraModel::model_id) {
-      k1 = -1 * camera.params[SimpleRadialCameraModel::extra_params_idxs[0]];
+      k1 = -1 * camera.params[SimpleRadialCameraModel::ExtraParamsIdxs()[0]];
       k2 = 0.0;
     } else if (camera.model_id == RadialCameraModel::model_id) {
-      k1 = -1 * camera.params[RadialCameraModel::extra_params_idxs[0]];
-      k2 = -1 * camera.params[RadialCameraModel::extra_params_idxs[1]];
+      k1 = -1 * camera.params[RadialCameraModel::ExtraParamsIdxs()[0]];
+      k2 = -1 * camera.params[RadialCameraModel::ExtraParamsIdxs()[1]];
     } else {
       LOG(WARNING) << "Recon3D only supports `SIMPLE_RADIAL`, "
                       "`RADIAL`, and pinhole camera models.";
@@ -344,11 +344,11 @@ bool ExportBundler(const Reconstruction& reconstruction,
       k1 = 0.0;
       k2 = 0.0;
     } else if (camera.model_id == SimpleRadialCameraModel::model_id) {
-      k1 = camera.params[SimpleRadialCameraModel::extra_params_idxs[0]];
+      k1 = camera.params[SimpleRadialCameraModel::ExtraParamsIdxs()[0]];
       k2 = 0.0;
     } else if (camera.model_id == RadialCameraModel::model_id) {
-      k1 = camera.params[RadialCameraModel::extra_params_idxs[0]];
-      k2 = camera.params[RadialCameraModel::extra_params_idxs[1]];
+      k1 = camera.params[RadialCameraModel::ExtraParamsIdxs()[0]];
+      k2 = camera.params[RadialCameraModel::ExtraParamsIdxs()[1]];
     } else {
       LOG(WARNING) << "Bundler only supports `SIMPLE_RADIAL`, "
                       "`RADIAL`, and pinhole camera models.\n";

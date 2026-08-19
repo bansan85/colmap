@@ -100,7 +100,7 @@ TEST(EstimateGeneralizedAbsolutePose, Nominal) {
                static_cast<size_t>(GP3PEstimator::kMinNumSamples));
   std::vector<size_t> shuffled_idxs(num_points);
   std::iota(shuffled_idxs.begin(), shuffled_idxs.end(), 0);
-  std::shuffle(shuffled_idxs.begin(), shuffled_idxs.end(), *PRNG);
+  std::shuffle(shuffled_idxs.begin(), shuffled_idxs.end(), *PRNG());
 
   FlatHashSet<size_t> unique_inlier_ids;
   unique_inlier_ids.reserve(gt_num_inliers);
@@ -533,7 +533,7 @@ TEST(EstimateStructureLessAbsolutePose, WithOutliers) {
       static_cast<size_t>(kOutlierRatio * problem.query_points2D.size());
   std::vector<size_t> shuffled_idxs(problem.query_points2D.size());
   std::iota(shuffled_idxs.begin(), shuffled_idxs.end(), 0);
-  std::shuffle(shuffled_idxs.begin(), shuffled_idxs.end(), *PRNG);
+  std::shuffle(shuffled_idxs.begin(), shuffled_idxs.end(), *PRNG());
   for (size_t i = 0; i < num_outliers; ++i) {
     problem.query_points2D[shuffled_idxs[i]] += Eigen::Vector2d(1000, 1000);
   }

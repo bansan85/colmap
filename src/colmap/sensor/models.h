@@ -158,9 +158,14 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
   static constexpr size_t num_focal_params = num_focal_params_val;           \
   static constexpr size_t num_pp_params = num_pp_params_val;                 \
   static constexpr size_t num_extra_params = num_extra_params_val;           \
-  static const std::array<size_t, (num_focal_params_val)> focal_length_idxs; \
-  static const std::array<size_t, (num_pp_params_val)> principal_point_idxs; \
-  static const std::array<size_t, (num_extra_params_val)> extra_params_idxs; \
+  /* Functions rather than static data members, which aren't exported      \
+   * across shared library boundaries on Windows. */                       \
+  static const std::array<size_t, (num_focal_params_val)>&                  \
+  FocalLengthIdxs();                                                        \
+  static const std::array<size_t, (num_pp_params_val)>&                     \
+  PrincipalPointIdxs();                                                     \
+  static const std::array<size_t, (num_extra_params_val)>&                  \
+  ExtraParamsIdxs();                                                        \
   static inline std::array<size_t, (num_focal_params_val)>                   \
   InitializeFocalLengthIdxs();                                               \
   static inline std::array<size_t, (num_pp_params_val)>                      \
@@ -177,7 +182,9 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
 #ifndef SPHERICAL_CAMERA_MODEL_PARAM_DEFINITIONS
 #define SPHERICAL_CAMERA_MODEL_PARAM_DEFINITIONS(num_metadata_params_val)   \
   static constexpr size_t num_metadata_params = num_metadata_params_val;    \
-  static const std::array<size_t, (num_metadata_params_val)> metadata_idxs; \
+  /* A function rather than a static data member, which isn't exported    \
+   * across shared library boundaries on Windows. */                      \
+  static const std::array<size_t, (num_metadata_params_val)>& MetadataIdxs(); \
   static inline std::array<size_t, (num_metadata_params_val)>               \
   InitializeMetaDataParamsIdxs();
 #endif
@@ -377,13 +384,13 @@ struct BasePerspectiveCameraModel : public BaseCameraModel<CameraModel> {
                              double scale_y,
                              std::vector<double>* params) {
     if constexpr (CameraModel::num_focal_params == 1) {
-      (*params)[CameraModel::focal_length_idxs[0]] *= 0.5 * (scale_x + scale_y);
+      (*params)[CameraModel::FocalLengthIdxs()[0]] *= 0.5 * (scale_x + scale_y);
     } else {
-      (*params)[CameraModel::focal_length_idxs[0]] *= scale_x;
-      (*params)[CameraModel::focal_length_idxs[1]] *= scale_y;
+      (*params)[CameraModel::FocalLengthIdxs()[0]] *= scale_x;
+      (*params)[CameraModel::FocalLengthIdxs()[1]] *= scale_y;
     }
-    (*params)[CameraModel::principal_point_idxs[0]] *= scale_x;
-    (*params)[CameraModel::principal_point_idxs[1]] *= scale_y;
+    (*params)[CameraModel::PrincipalPointIdxs()[0]] *= scale_x;
+    (*params)[CameraModel::PrincipalPointIdxs()[1]] *= scale_y;
   }
 
  private:
@@ -399,8 +406,8 @@ struct BaseSphericalCameraModel : public BaseCameraModel<CameraModel> {
   static inline void Rescale(double scale_x,
                              double scale_y,
                              std::vector<double>* params) {
-    (*params)[CameraModel::metadata_idxs[0]] *= scale_x;
-    (*params)[CameraModel::metadata_idxs[1]] *= scale_y;
+    (*params)[CameraModel::MetadataIdxs()[0]] *= scale_x;
+    (*params)[CameraModel::MetadataIdxs()[1]] *= scale_y;
   }
 
  private:
@@ -1093,7 +1100,7 @@ bool BasePerspectiveCameraModel<CameraModel>::HasBogusFocalLength(
     const T min_focal_length_ratio,
     const T max_focal_length_ratio) {
   const T inv_max_size = 1.0 / std::max(width, height);
-  for (const size_t idx : CameraModel::focal_length_idxs) {
+  for (const size_t idx : CameraModel::FocalLengthIdxs()) {
     const T focal_length_ratio = params[idx] * inv_max_size;
     if (focal_length_ratio < min_focal_length_ratio ||
         focal_length_ratio > max_focal_length_ratio) {
@@ -1108,8 +1115,8 @@ template <typename CameraModel>
 template <typename T>
 bool BasePerspectiveCameraModel<CameraModel>::HasBogusPrincipalPoint(
     const std::vector<T>& params, const size_t width, const size_t height) {
-  const T cx = params[CameraModel::principal_point_idxs[0]];
-  const T cy = params[CameraModel::principal_point_idxs[1]];
+  const T cx = params[CameraModel::PrincipalPointIdxs()[0]];
+  const T cy = params[CameraModel::PrincipalPointIdxs()[1]];
   return cx < 0 || cx > width || cy < 0 || cy > height;
 }
 
@@ -1117,7 +1124,7 @@ template <typename CameraModel>
 template <typename T>
 bool BasePerspectiveCameraModel<CameraModel>::HasBogusExtraParams(
     const std::vector<T>& params, const T max_extra_param) {
-  for (const size_t idx : CameraModel::extra_params_idxs) {
+  for (const size_t idx : CameraModel::ExtraParamsIdxs()) {
     if (std::abs(params[idx]) > max_extra_param) {
       return true;
     }
@@ -1131,10 +1138,10 @@ template <typename T>
 T BasePerspectiveCameraModel<CameraModel>::CamFromImgThreshold(
     const T* params, const T threshold) {
   T mean_focal_length = 0;
-  for (const size_t idx : CameraModel::focal_length_idxs) {
+  for (const size_t idx : CameraModel::FocalLengthIdxs()) {
     mean_focal_length += params[idx];
   }
-  mean_focal_length /= CameraModel::focal_length_idxs.size();
+  mean_focal_length /= CameraModel::FocalLengthIdxs().size();
   return threshold / mean_focal_length;
 }
 

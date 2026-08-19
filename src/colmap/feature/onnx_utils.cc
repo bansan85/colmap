@@ -180,6 +180,17 @@ void ONNXModel::InitializeSession(const std::string& model_path,
     if (gpu_indices[0] >= 0) {
       cuda_options.device_id = gpu_indices[0];
     }
+    // Successive calls feed images of varying resolutions (thumbnails of
+    // different aspect ratios), so each call can require a differently
+    // shaped workspace/activation buffer. The default kNextPowerOfTwo arena
+    // growth strategy repeatedly doubles the arena to fit each new shape,
+    // which can exhaust GPU memory even though no single tensor is actually
+    // that large. kSameAsRequested only grows the arena by what is actually
+    // requested. Likewise, exhaustive cuDNN conv-algorithm search re-runs its
+    // expensive benchmarking for every new shape and may pick algorithms with
+    // large workspace requirements; the heuristic search avoids both costs.
+    cuda_options.arena_extend_strategy = 1;  // kSameAsRequested
+    cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearchHeuristic;
     session_options_.AppendExecutionProvider_CUDA(cuda_options);
   }
 #endif

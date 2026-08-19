@@ -71,6 +71,13 @@ set(COLMAP_EXE_PUBLIC_LIBS
 if(MVS_ENABLED)
     list(APPEND COLMAP_EXE_SRCS mvs.h mvs.cc)
     list(APPEND COLMAP_EXE_PUBLIC_LIBS colmap_mvs)
+    # mvs.cc calls into PatchMatchController, which is defined in
+    # colmap_mvs_cuda. On shared library builds (e.g. Windows DLLs), all
+    # symbols used by colmap_exe must be resolved at link time, so this needs
+    # to be linked here directly rather than only into the final executable.
+    if(CUDA_ENABLED OR HIP_ENABLED)
+        list(APPEND COLMAP_EXE_PUBLIC_LIBS colmap_mvs_cuda)
+    endif()
 endif()
 
 COLMAP_ADD_LIBRARY(

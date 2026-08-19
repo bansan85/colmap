@@ -407,6 +407,75 @@ if(IS_MSVC)
             PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                         GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
             DESTINATION "/")
+
+    # vcpkg's applocal deployment (VCPKG_APPLOCAL_DEPS, on by default when
+    # building with the vcpkg toolchain file) copies every DLL dependency of
+    # colmap_main next to its executable in the build tree, which is why the
+    # binary runs fine straight out of the build directory. `install(TARGETS)`
+    # only copies the executable itself though, so redo that DLL deployment
+    # into the install tree.
+    install(
+        DIRECTORY $<TARGET_FILE_DIR:colmap_main>/
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        FILES_MATCHING PATTERN "*.dll")
+
+    # CUDA is not managed by vcpkg, so applocal deployment never picks up the
+    # CUDA runtime DLLs; deploy the ones COLMAP actually links against.
+    if(CUDA_ENABLED AND CUDAToolkit_BIN_DIR)
+        file(GLOB _colmap_cuda_dlls
+            "${CUDAToolkit_BIN_DIR}/cudart64_*.dll"
+            "${CUDAToolkit_BIN_DIR}/curand64_*.dll")
+        if(_colmap_cuda_dlls)
+            install(FILES ${_colmap_cuda_dlls} DESTINATION ${CMAKE_INSTALL_BINDIR})
+        else()
+            message(WARNING
+                "CUDA_ENABLED is set but no cudart64_*.dll/curand64_*.dll "
+                "were found under ${CUDAToolkit_BIN_DIR}; the installed "
+                "colmap.exe may fail to start.")
+        endif()
+        unset(_colmap_cuda_dlls)
+    endif()
+
+    # Qt's platform/style/imageformat plugins (e.g. platforms/qwindows.dll)
+    # are loaded dynamically at runtime rather than imported, so applocal
+    # deployment never copies them either. Deploy them manually from vcpkg's
+    # installed tree into "plugins/" next to the install prefix, matching the
+    # QT_PLUGIN_PATH that COLMAP.bat points at.
+    if(GUI_ENABLED)
+        if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+            set(_colmap_qt_vcpkg_root "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+            # Dynamic vcpkg triplets ship both configs side by side (Release
+            # under the triplet root, Debug under a nested "debug/"
+            # directory), so pick the matching one with a generator
+            # expression rather than IS_DEBUG: with the Visual Studio /
+            # Ninja Multi-Config generators, CMAKE_BUILD_TYPE (and thus
+            # IS_DEBUG) is fixed at configure time and does not track the
+            # --config chosen at build/install time.
+            set(_colmap_qt_plugins_dir
+                "${_colmap_qt_vcpkg_root}/$<$<CONFIG:Debug>:debug/>Qt${QT_VERSION_MAJOR}/plugins")
+            install(DIRECTORY "${_colmap_qt_plugins_dir}" DESTINATION ".")
+            # Best-effort sanity check: only catches the common single-config
+            # (Release-ish) case, since the generator expression above can't
+            # be evaluated yet, but still gives an early warning for a
+            # totally missing Qt install.
+            if(NOT EXISTS "${_colmap_qt_vcpkg_root}/Qt${QT_VERSION_MAJOR}/plugins"
+               AND NOT EXISTS "${_colmap_qt_vcpkg_root}/debug/Qt${QT_VERSION_MAJOR}/plugins")
+                message(WARNING
+                    "Could not find a Qt plugins directory under "
+                    "${_colmap_qt_vcpkg_root}; the installed colmap.exe GUI "
+                    "may fail to start (missing platform/style/imageformat "
+                    "plugins).")
+            endif()
+            unset(_colmap_qt_vcpkg_root)
+            unset(_colmap_qt_plugins_dir)
+        else()
+            message(WARNING
+                "GUI_ENABLED is set but VCPKG_INSTALLED_DIR/VCPKG_TARGET_TRIPLET "
+                "are not defined (not building with the vcpkg toolchain file?); "
+                "skipping Qt plugin deployment. The installed colmap.exe GUI "
+                "may fail to start.")
+        endif()
+    endif()
 endif()
 
 # Install application meny entry and icon under Linux/Unix.

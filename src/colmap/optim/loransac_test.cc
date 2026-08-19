@@ -108,7 +108,7 @@ TEST(LORANSAC, SimilarityTransform) {
 
   RANSACOptions options;
   options.max_error = 10;
-  options.random_seed = kDefaultPRNGSeed;
+  options.random_seed = DefaultPRNGSeed();
   LORANSAC<SimilarityTransformEstimator<3>, SimilarityTransformEstimator<3>>
       loransac(options);
   const auto report = loransac.Estimate(data.src, data.tgt);
@@ -121,7 +121,7 @@ TEST(LORANSAC, ParallelSimilarityTransform) {
 
   RANSACOptions options;
   options.max_error = 10;
-  options.random_seed = kDefaultPRNGSeed;
+  options.random_seed = DefaultPRNGSeed();
   options.num_threads = 4;
   LORANSAC<SimilarityTransformEstimator<3>, SimilarityTransformEstimator<3>>
       loransac(options);

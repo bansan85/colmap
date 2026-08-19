@@ -215,7 +215,7 @@ FeatureDescriptors CreateRandomFeatureDescriptors(const size_t num_features) {
   std::vector<int> dims(128);
   std::iota(dims.begin(), dims.end(), 0);
   for (size_t i = 0; i < num_features; ++i) {
-    std::shuffle(dims.begin(), dims.end(), *PRNG);
+    std::shuffle(dims.begin(), dims.end(), *PRNG());
     for (size_t j = 0; j < 10; ++j) {
       descriptors_float(i, dims[j]) = 1.0f;
     }

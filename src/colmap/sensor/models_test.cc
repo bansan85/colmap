@@ -136,18 +136,18 @@ void TestModel(const std::vector<double>& params) {
   EXPECT_EQ(std::vector<size_t>(
                 CameraModelFocalLengthIdxs(CameraModel::model_id).begin(),
                 CameraModelFocalLengthIdxs(CameraModel::model_id).end()),
-            std::vector<size_t>(CameraModel::focal_length_idxs.begin(),
-                                CameraModel::focal_length_idxs.end()));
+            std::vector<size_t>(CameraModel::FocalLengthIdxs().begin(),
+                                CameraModel::FocalLengthIdxs().end()));
   EXPECT_EQ(std::vector<size_t>(
                 CameraModelPrincipalPointIdxs(CameraModel::model_id).begin(),
                 CameraModelPrincipalPointIdxs(CameraModel::model_id).end()),
-            std::vector<size_t>(CameraModel::principal_point_idxs.begin(),
-                                CameraModel::principal_point_idxs.end()));
+            std::vector<size_t>(CameraModel::PrincipalPointIdxs().begin(),
+                                CameraModel::PrincipalPointIdxs().end()));
   EXPECT_EQ(std::vector<size_t>(
                 CameraModelExtraParamsIdxs(CameraModel::model_id).begin(),
                 CameraModelExtraParamsIdxs(CameraModel::model_id).end()),
-            std::vector<size_t>(CameraModel::extra_params_idxs.begin(),
-                                CameraModel::extra_params_idxs.end()));
+            std::vector<size_t>(CameraModel::ExtraParamsIdxs().begin(),
+                                CameraModel::ExtraParamsIdxs().end()));
   EXPECT_TRUE(CameraModelMetaDataParamsIdxs(CameraModel::model_id).empty());
   EXPECT_EQ(CameraModelNumParams(CameraModel::model_id),
             CameraModel::num_params);
@@ -158,7 +158,7 @@ void TestModel(const std::vector<double>& params) {
       CameraModel::model_id, default_params, 100, 100, 0.1, 0.5, 1.0));
   EXPECT_TRUE(CameraModelHasBogusParams(
       CameraModel::model_id, default_params, 100, 100, 1.5, 2.0, 1.0));
-  if (CameraModel::extra_params_idxs.size() > 0) {
+  if (CameraModel::ExtraParamsIdxs().size() > 0) {
     EXPECT_TRUE(CameraModelHasBogusParams(
         CameraModel::model_id, default_params, 100, 100, 0.1, 2.0, -0.1));
   }
@@ -205,7 +205,7 @@ void TestModel(const std::vector<double>& params) {
     }
   }
 
-  const auto pp_idxs = CameraModel::principal_point_idxs;
+  const auto pp_idxs = CameraModel::PrincipalPointIdxs();
   TestCamFromImgToImg<CameraModel>(
       params, params[pp_idxs.at(0)], params[pp_idxs.at(1)]);
   TestCamRayFromImgToImg<CameraModel>(

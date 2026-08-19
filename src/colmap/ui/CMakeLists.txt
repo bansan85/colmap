@@ -83,4 +83,12 @@ COLMAP_ADD_LIBRARY(
 )
 if(MVS_ENABLED)
     target_link_libraries(colmap_ui PUBLIC colmap_mvs)
+    # dense_reconstruction_widget.cc calls into PatchMatchController, which is
+    # defined in colmap_mvs_cuda. On shared library builds (e.g. Windows
+    # DLLs), all symbols used by colmap_ui must be resolved at link time, so
+    # this needs to be linked here directly rather than only into the final
+    # executable.
+    if(CUDA_ENABLED OR HIP_ENABLED)
+        target_link_libraries(colmap_ui PUBLIC colmap_mvs_cuda)
+    endif()
 endif()
